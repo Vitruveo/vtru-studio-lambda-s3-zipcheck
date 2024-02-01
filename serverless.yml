@@ -1,0 +1,28 @@
+service: vtru-studio-lambda-s3-zipcheck
+frameworkVersion: '3'
+
+provider:
+    name: aws
+    stage: qa
+    runtime: nodejs18.x
+    memorySize: 128
+    timeout: 300
+    iamRoleStatements:
+        - Effect: Allow
+          Action:
+              - s3:*
+          Resource: '*'
+
+custom:
+    bucket: vitruveo-studio-${opt:stage, 'dev'}-assets
+
+functions:
+    postprocess:
+        handler: handler.postprocess
+        events:
+            - s3:
+                  bucket: ${self:custom.bucket}
+                  event: s3:ObjectCreated:*
+                  rules:
+                      - suffix: .zip
+                  existing: true
