@@ -14,11 +14,14 @@ provider:
           Resource: '*'
 
 custom:
-    bucket: vitruveo-studio-${opt:stage, 'dev'}-assets
+    bucket: vitruveo-studio-${opt:stage, 'qa'}-assets
+    notifyApiUrl: https://api.vtru.${opt:stage, 'dev'}
 
 functions:
     postprocess:
         handler: handler.postprocess
+        environment:
+            NOTIFY_API_URL: ${self:custom.notifyApiUrl}
         events:
             - s3:
                   bucket: ${self:custom.bucket}
